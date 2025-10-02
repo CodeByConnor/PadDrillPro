@@ -1,0 +1,20 @@
+{
+    "asset": "8f74e9c4b21564dd0a59c935002f5c3a",
+    "fileName": "0199916a-b79b-76ab-9487-0f1a568aafe6.jpg",
+    "prompt": "A simple placeholder sprite for a full-screen background in a 2D boxing rhythm game.",
+    "negativePrompt": "",
+    "model": "94c4260f-b988-40e7-b3d3-435b9f449bd0",
+    "modelName": "Flux.1 Dev",
+    "customSeed": -1,
+    "w3CTraceId": "14c97bb614479e0f152703b69e00913d",
+    "refinementMode": "Generation",
+    "pixelateTargetSize": 0,
+    "pixelateKeepImageSize": false,
+    "pixelatePixelBlockSize": 0,
+    "pixelateMode": 0,
+    "pixelateOutlineThickness": 0,
+    "doodles": {
+        "m_Items": []
+    },
+    "upscaleFactor": 0
+}
