@@ -47,6 +47,12 @@ public class TimingSystem : MonoBehaviour
         {
             gameManager.ResetStreak();
             result = "Miss";
+            
+            // Play miss sound
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.PlayTimingSound("Miss");
+            }
         }
         
         // Show feedback on screen

@@ -13,12 +13,16 @@ public class InputHandler : MonoBehaviour
     
     private GameManager gameManager;
     private TimingSystem timingSystem;
+    private FighterAnimator fighterAnimator;
+    private CueSystem cueSystem;
     
     // Start is called before the first frame update
     void Start()
     {
         gameManager = GetComponent<GameManager>();
         timingSystem = GetComponent<TimingSystem>();
+        fighterAnimator = FindAnyObjectByType<FighterAnimator>();
+        cueSystem = FindAnyObjectByType<CueSystem>();
         Debug.Log("InputHandler ready!");
     }
     
@@ -36,45 +40,70 @@ public class InputHandler : MonoBehaviour
         if (Input.GetKeyDown(jabKey))
         {
             Debug.Log("JAB pressed!");
-            HandleInput("Jab");
+            HandleInput("Jab", jabKey);
         }
         
         if (Input.GetKeyDown(crossKey))
         {
             Debug.Log("CROSS pressed!");
-            HandleInput("Cross");
+            HandleInput("Cross", crossKey);
         }
         
         if (Input.GetKeyDown(hookKey))
         {
             Debug.Log("HOOK pressed!");
-            HandleInput("Hook");
+            HandleInput("Hook", hookKey);
         }
         
         if (Input.GetKeyDown(uppercutKey))
         {
             Debug.Log("UPPERCUT pressed!");
-            HandleInput("Uppercut");
+            HandleInput("Uppercut", uppercutKey);
         }
         
         if (Input.GetKeyDown(blockKey))
         {
             Debug.Log("BLOCK pressed!");
-            HandleInput("Block");
+            HandleInput("Block", blockKey);
         }
     }
     
-    void HandleInput(string inputType)
+    void HandleInput(string inputType, KeyCode keyPressed)
     {
         Debug.Log($"Player input: {inputType}");
         
-        // For now, just trigger timing judgment with a random offset
-        // Later this will be based on actual cue timing
-        float randomOffset = Random.Range(-0.3f, 0.3f);
-        
-        if (timingSystem != null)
+        // Trigger fighter animation
+        if (fighterAnimator != null)
         {
-            timingSystem.JudgeTiming(randomOffset);
+            fighterAnimator.PlayAnimation(inputType);
+        }
+        
+        // Check with cue system for proper timing
+        if (cueSystem != null)
+        {
+            bool validInput = cueSystem.CheckInput(keyPressed);
+            if (validInput)
+            {
+                // Play punch sound for successful hit
+                if (AudioManager.Instance != null)
+                {
+                    AudioManager.Instance.PlayPunchSound(inputType);
+                }
+            }
+            else
+            {
+                // Wrong key or no active cue - don't give points
+                Debug.Log("Invalid input timing or wrong key");
+            }
+        }
+        else
+        {
+            // Fallback to old random system if no cue system
+            float randomOffset = Random.Range(-0.3f, 0.3f);
+            if (timingSystem != null)
+            {
+                timingSystem.JudgeTiming(randomOffset);
+            }
         }
     }
 }
