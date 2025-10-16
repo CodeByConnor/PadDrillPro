@@ -29,6 +29,7 @@ public class CueSystem : MonoBehaviour
     private GameManager gameManager;
     private TimingSystem timingSystem;
     private CoachAnimator coachAnimator;
+    private Coroutine cueLoopCoroutine;
     
     void Start()
     {
@@ -36,7 +37,7 @@ public class CueSystem : MonoBehaviour
         timingSystem = FindAnyObjectByType<TimingSystem>();
         coachAnimator = FindAnyObjectByType<CoachAnimator>();
         
-        StartCoroutine(CueLoop());
+        cueLoopCoroutine = StartCoroutine(CueLoop());
         Debug.Log("CueSystem ready!");
     }
     
@@ -44,16 +45,39 @@ public class CueSystem : MonoBehaviour
     {
         yield return new WaitForSeconds(0.3f); // Faster initial start
         
-        while (gameManager != null && gameManager.gameActive)
+        while (gameManager != null)
         {
-            // Update timing based on current speed multiplier
-            UpdateTimingSettings();
+            // Wait for game to become active
+            while (gameManager != null && !gameManager.gameActive)
+            {
+                yield return null; // Wait one frame and check again
+            }
             
-            ShowRandomCue();
+            // Game is active, start cue loop
+            while (gameManager != null && gameManager.gameActive)
+            {
+                // Update timing based on current speed multiplier
+                UpdateTimingSettings();
+                
+                ShowRandomCue();
+                
+                // Much tighter and faster random wait time between cues
+                float randomWait = Random.Range(currentCueCooldown * 0.2f, currentCueCooldown * 0.8f);
+                yield return new WaitForSeconds(currentCueDisplayTime + randomWait);
+            }
             
-            // Much tighter and faster random wait time between cues
-            float randomWait = Random.Range(currentCueCooldown * 0.2f, currentCueCooldown * 0.8f);
-            yield return new WaitForSeconds(currentCueDisplayTime + randomWait);
+            // Game ended, clear any active cues and reset coach
+            cueActive = false;
+            if (currentCueText != null)
+            {
+                currentCueText.text = "";
+            }
+            
+            // Return coach to original position
+            if (coachAnimator != null)
+            {
+                coachAnimator.ReturnToOriginal();
+            }
         }
     }
     
@@ -102,6 +126,11 @@ public class CueSystem : MonoBehaviour
         
         // Start timing window
         StartCoroutine(CueTimeout());
+    }
+    
+    public bool IsCueActive()
+    {
+        return cueActive;
     }
     
     IEnumerator CueTimeout()
@@ -169,9 +198,10 @@ public class CueSystem : MonoBehaviour
         }
         else
         {
-            // Wrong input
+            // Wrong input - player loses a life for pressing wrong key during active cue
             cueActive = false;
             gameManager.ResetStreak();
+            gameManager.TakeDamage(); // Player loses a life for wrong key
             gameManager.ShowFeedback("Wrong Key!");
             
             if (currentCueText != null)

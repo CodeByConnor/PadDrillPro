@@ -49,6 +49,10 @@ public class GameManager : MonoBehaviour
         if (gameOverPanel != null)
             gameOverPanel.SetActive(false);
             
+        // Clear any placeholder text
+        if (feedbackText != null)
+            feedbackText.text = "";
+            
         Debug.Log("GameManager started!");
         StartRound();
     }
@@ -126,6 +130,12 @@ public class GameManager : MonoBehaviour
     
     public void TakeDamage()
     {
+        // Guard against taking damage when already dead
+        if (currentHealth <= 0 || !gameActive)
+        {
+            return;
+        }
+        
         currentHealth--;
         Debug.Log($"Health lost! Remaining: {currentHealth}");
         
@@ -158,22 +168,22 @@ public class GameManager : MonoBehaviour
     public void ResetStreak()
     {
         streak = 0;
-        TakeDamage(); // Lose health when streak is broken
+        // Don't take damage here - let the calling system handle damage
     }
     
     void UpdateUI()
     {
         if (scoreText != null)
-            scoreText.text = "Score: " + score;
+            scoreText.text = "SCORE: " + score;
             
         if (streakText != null)
-            streakText.text = "Streak: " + streak;
+            streakText.text = "STREAK: " + streak;
             
         if (timerText != null)
-            timerText.text = "Round Timer: " + Mathf.Ceil(timeRemaining).ToString();
+            timerText.text = "ROUND TIMER: " + Mathf.Ceil(timeRemaining).ToString();
             
         if (enduranceLabel != null)
-            enduranceLabel.text = "Endurance:";
+            enduranceLabel.text = "ENDURANCE:";
     }
     
     public void ShowFeedback(string feedback)
@@ -225,7 +235,7 @@ public class GameManager : MonoBehaviour
         
         if (restartText != null)
         {
-            restartText.text = "Press R to Restart";
+            restartText.text = "PRESS R TO RESTART";
         }
     }
     
@@ -234,6 +244,12 @@ public class GameManager : MonoBehaviour
         if (gameOverPanel != null)
         {
             gameOverPanel.SetActive(false);
+        }
+        
+        // Reset hearts to full visibility
+        if (heartUI != null)
+        {
+            heartUI.ResetHearts();
         }
         
         // Reset all game state
