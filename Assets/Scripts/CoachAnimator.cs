@@ -5,9 +5,9 @@ using UnityEngine;
 public class CoachAnimator : MonoBehaviour
 {
     [Header("Movement Settings")]
-    public float moveSpeed = 15f;       // Much faster dash speed
-    public float moveDistance = 1.5f;
-    public float snapBackSpeed = 20f;   // Even faster return dash
+    public float moveSpeed = 25f;       // Much more dramatic dash speed
+    public float moveDistance = 2.5f;   // Increased distance for more dramatic movement
+    public float snapBackSpeed = 30f;   // Even faster return dash
     
     [Header("Visual Feedback")]
     public bool showMovementFeedback = true;
@@ -34,15 +34,15 @@ public class CoachAnimator : MonoBehaviour
     
     // Auto-generated position offsets from original position (overlap fighter positioning)
     // Coach dashes to overlap/touch the fighter for realistic pad contact
-    private Vector3 jabOffset = new Vector3(0.2f, 0.3f, 0f);       // Overlap fighter for jab contact
-    private Vector3 crossOffset = new Vector3(0.1f, 0.1f, 0f);     // Overlap fighter for cross contact  
-    private Vector3 hookOffset = new Vector3(0.3f, -0.1f, 0f);     // Overlap fighter for hook contact
-    private Vector3 uppercutOffset = new Vector3(0.2f, -0.4f, 0f); // Overlap fighter for uppercut contact
-    private Vector3 blockOffset = new Vector3(0.4f, 0.2f, 0f);     // Close overlap for blocking
+    private Vector3 jabOffset = new Vector3(2.0f, 0.3f, 0f);       // Close enough to make contact for jab
+    private Vector3 crossOffset = new Vector3(1.8f, 0.1f, 0f);     // Close enough for cross contact  
+    private Vector3 hookOffset = new Vector3(2.2f, -0.1f, 0f);     // Dramatic side movement reaching fighter
+    private Vector3 uppercutOffset = new Vector3(1.9f, -0.6f, 0f); // Lower position reaching fighter
+    private Vector3 blockOffset = new Vector3(2.1f, 0.4f, 0f);     // Higher position reaching fighter
     
-    // Minimal variation ranges (tight overlap positioning)
-    private Vector3 positionVariation = new Vector3(0.05f, 0.08f, 0f);  // Tiny variation to maintain overlap
-    private Vector3 angleVariation = new Vector3(0.03f, 0.1f, 0f);      // Small angle changes
+    // Dramatic variation ranges for sporadic movement
+    private Vector3 positionVariation = new Vector3(0.3f, 0.4f, 0f);    // Much more dramatic variation
+    private Vector3 angleVariation = new Vector3(0.2f, 0.3f, 0f);       // Larger angle changes for unpredictability
     
     void Start()
     {
@@ -177,46 +177,46 @@ public class CoachAnimator : MonoBehaviour
         switch (cueType.ToLower())
         {
             case "jab":
-                // Quick jabs with tiny adjustments to stay in range
+                // Dramatic jab movements with sporadic positioning
                 variation = new Vector3(
-                    Random.Range(-positionVariation.x * 0.5f, positionVariation.x * 0.5f),
-                    Random.Range(-angleVariation.y * 0.8f, angleVariation.y * 1.0f),
+                    Random.Range(-positionVariation.x * 1.2f, positionVariation.x * 0.8f),
+                    Random.Range(-angleVariation.y * 1.5f, angleVariation.y * 1.8f),
                     0f
                 );
                 break;
                 
             case "cross":
-                // Crosses with slight positioning but stay close
+                // Aggressive cross movements with wide variation
                 variation = new Vector3(
-                    Random.Range(-positionVariation.x * 0.7f, positionVariation.x * 0.3f),
-                    Random.Range(-angleVariation.y * 0.6f, angleVariation.y * 0.8f),
+                    Random.Range(-positionVariation.x * 1.5f, positionVariation.x * 1.0f),
+                    Random.Range(-angleVariation.y * 1.2f, angleVariation.y * 1.4f),
                     0f
                 );
                 break;
                 
             case "hook":
-                // Hooks with small lateral movement in contact range
+                // Very dramatic lateral hook movements
                 variation = new Vector3(
-                    Random.Range(-positionVariation.x * 0.8f, positionVariation.x * 0.6f),
-                    Random.Range(-angleVariation.y * 1.0f, angleVariation.y * 1.0f),
+                    Random.Range(-positionVariation.x * 2.0f, positionVariation.x * 1.8f),
+                    Random.Range(-angleVariation.y * 1.8f, angleVariation.y * 2.0f),
                     0f
                 );
                 break;
                 
             case "uppercut":
-                // Uppercuts stay very close for low contact
+                // Sporadic uppercut positioning with dramatic height changes
                 variation = new Vector3(
-                    Random.Range(-positionVariation.x * 0.4f, positionVariation.x * 0.4f),
-                    Random.Range(-angleVariation.y * 0.5f, angleVariation.y * 0.7f),
+                    Random.Range(-positionVariation.x * 1.0f, positionVariation.x * 1.0f),
+                    Random.Range(-angleVariation.y * 1.5f, angleVariation.y * 1.2f),
                     0f
                 );
                 break;
                 
             case "block":
-                // Blocks stay extremely close for contact
+                // Dramatic blocking movements with sporadic positioning
                 variation = new Vector3(
-                    Random.Range(-positionVariation.x * 0.3f, positionVariation.x * 0.3f),
-                    Random.Range(-angleVariation.y * 0.5f, angleVariation.y * 0.8f),
+                    Random.Range(-positionVariation.x * 1.3f, positionVariation.x * 1.1f),
+                    Random.Range(-angleVariation.y * 1.4f, angleVariation.y * 1.6f),
                     0f
                 );
                 break;
@@ -224,6 +224,7 @@ public class CoachAnimator : MonoBehaviour
         
         return variation;
     }
+    
     
     // Call this when cue times out or is completed
     public void OnCueComplete()

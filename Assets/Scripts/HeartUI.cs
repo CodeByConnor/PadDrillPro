@@ -10,6 +10,7 @@ public class HeartUI : MonoBehaviour
     public Sprite heartSprite;      // Or drag heart sprite directly here
     public Transform heartContainer;  // Parent object for hearts
     public int maxHearts = 5;
+    public float heartSize = 1.0f;  // Scale multiplier for heart size
     
     private List<GameObject> heartObjects = new List<GameObject>();
     private GameManager gameManager;
@@ -61,6 +62,7 @@ public class HeartUI : MonoBehaviour
         {
             // Use provided heart prefab
             heart = Instantiate(heartPrefab, heartContainer);
+            heart.transform.localScale = Vector3.one * heartSize;  // Apply size multiplier
         }
         else
         {
@@ -82,8 +84,8 @@ public class HeartUI : MonoBehaviour
             
             // Set size - make them more visible
             RectTransform rectTransform = heart.GetComponent<RectTransform>();
-            rectTransform.sizeDelta = new Vector2(30, 30);  // Slightly bigger
-            rectTransform.localScale = Vector3.one;
+            rectTransform.sizeDelta = new Vector2(30, 30);  // Base size
+            rectTransform.localScale = Vector3.one * heartSize;  // Apply size multiplier
         }
         
         return heart;
@@ -116,6 +118,33 @@ public class HeartUI : MonoBehaviour
     {
         // Optional: Add heart loss animation
         StartCoroutine(HeartLossAnimation());
+    }
+    
+    public void ResetHearts()
+    {
+        // Reset all hearts to full visibility and normal scale
+        for (int i = 0; i < heartObjects.Count; i++)
+        {
+            if (heartObjects[i] != null)
+            {
+                GameObject heart = heartObjects[i];
+                
+                // Reset scale
+                heart.transform.localScale = Vector3.one * heartSize;
+                
+                // Reset alpha/color
+                Image heartImage = heart.GetComponent<Image>();
+                if (heartImage != null)
+                {
+                    heartImage.color = new Color(heartImage.color.r, heartImage.color.g, heartImage.color.b, 1f);
+                }
+                
+                // Make sure it's active
+                heart.SetActive(true);
+            }
+        }
+        
+        Debug.Log("Hearts reset to full visibility");
     }
     
     IEnumerator HeartLossAnimation()
