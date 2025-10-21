@@ -6,7 +6,7 @@ using TMPro;
 public class GameManager : MonoBehaviour
 {
     [Header("Game Settings")]
-    public float roundDuration = 90f;   // Increased to 90 seconds for more gameplay
+    public float roundDuration = 90f;
     public int targetBPM = 120;
     
     [Header("Score System")]
@@ -20,9 +20,9 @@ public class GameManager : MonoBehaviour
     public int currentHealth = 5;
     
     [Header("Difficulty System")]
-    public int hitsForSpeedIncrease = 3;     // Changed from 5 to 3
+    public int hitsForSpeedIncrease = 3;
     public float speedMultiplier = 1.0f;
-    public float maxSpeedMultiplier = 4.0f;  // Increased max for more challenge
+    public float maxSpeedMultiplier = 4.0f;
     
     [Header("Game State")]
     public bool gameActive = false;
@@ -33,10 +33,10 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI streakText;
     public TextMeshProUGUI timerText;
     public TextMeshProUGUI feedbackText;
-    public TextMeshProUGUI enduranceLabel;  // "Endurance:" label
-    public GameObject gameOverPanel;        // Game over screen panel
-    public TextMeshProUGUI finalScoreText; // Final score display
-    public TextMeshProUGUI restartText;     // Restart instruction text
+    public TextMeshProUGUI enduranceLabel;
+    public GameObject gameOverPanel;
+    public TextMeshProUGUI finalScoreText;
+    public TextMeshProUGUI restartText;
     
     private HeartUI heartUI;
     
@@ -45,11 +45,9 @@ public class GameManager : MonoBehaviour
     {
         heartUI = FindAnyObjectByType<HeartUI>();
         
-        // Hide game over panel at start
         if (gameOverPanel != null)
             gameOverPanel.SetActive(false);
             
-        // Clear any placeholder text
         if (feedbackText != null)
             feedbackText.text = "";
             
@@ -72,7 +70,6 @@ public class GameManager : MonoBehaviour
             UpdateUI();
         }
         
-        // Check for restart input when game is over
         if (!gameActive && Input.GetKeyDown(KeyCode.R))
         {
             RestartGame();
@@ -119,10 +116,10 @@ public class GameManager : MonoBehaviour
             }
         }
         
-        // Check for speed increase every 3 hits
+        // Check for speed increase every 3 hits - makes game more intense
         if (successfulHits % hitsForSpeedIncrease == 0 && speedMultiplier < maxSpeedMultiplier)
         {
-            speedMultiplier *= 1.5f;  // 50% increase each time - faster progression
+            speedMultiplier *= 1.5f;
             ShowFeedback($"SPEED UP! x{speedMultiplier:F1}");
             Debug.Log($"Speed increased to {speedMultiplier:F1}x after {successfulHits} hits");
         }
@@ -130,7 +127,6 @@ public class GameManager : MonoBehaviour
     
     public void TakeDamage()
     {
-        // Guard against taking damage when already dead
         if (currentHealth <= 0 || !gameActive)
         {
             return;
@@ -139,13 +135,12 @@ public class GameManager : MonoBehaviour
         currentHealth--;
         Debug.Log($"Health lost! Remaining: {currentHealth}");
         
-        // Play heart loss sound
+        // Play heart loss sound and animate heart disappearing
         if (AudioManager.Instance != null)
         {
             AudioManager.Instance.PlayHeartLossSound();
         }
         
-        // Trigger heart loss animation
         if (heartUI != null)
         {
             heartUI.AnimateHeartLoss();
@@ -168,7 +163,6 @@ public class GameManager : MonoBehaviour
     public void ResetStreak()
     {
         streak = 0;
-        // Don't take damage here - let the calling system handle damage
     }
     
     void UpdateUI()
@@ -192,7 +186,7 @@ public class GameManager : MonoBehaviour
         {
             feedbackText.text = feedback;
             
-            // Change color based on feedback
+            // Change color based on feedback type for visual feedback
             switch (feedback)
             {
                 case "Perfect":
@@ -209,7 +203,6 @@ public class GameManager : MonoBehaviour
                     break;
             }
             
-            // Clear feedback after 1 second
             StartCoroutine(ClearFeedback());
         }
     }
@@ -246,16 +239,13 @@ public class GameManager : MonoBehaviour
             gameOverPanel.SetActive(false);
         }
         
-        // Reset hearts to full visibility
         if (heartUI != null)
         {
             heartUI.ResetHearts();
         }
         
-        // Reset all game state
         StartRound();
         
-        // Clear any lingering feedback
         if (feedbackText != null)
             feedbackText.text = "";
             

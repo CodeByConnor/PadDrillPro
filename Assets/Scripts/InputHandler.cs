@@ -80,14 +80,12 @@ public class InputHandler : MonoBehaviour
         }
         
         // Always check for invalid key presses (even if valid key was pressed)
-        // This ensures wrong keys are caught regardless of timing
         CheckForInvalidKeyPress();
     }
     
     void CheckForInvalidKeyPress()
     {
-        // More efficient approach - check common problematic keys directly
-        // Only check keys that are likely to be pressed during gameplay
+        // Hardcoded keys to prevent accidental penalties
         KeyCode[] commonKeys = {
             KeyCode.A, KeyCode.B, KeyCode.C, KeyCode.D, KeyCode.E, KeyCode.F, KeyCode.G, KeyCode.H,
             KeyCode.M, KeyCode.N, KeyCode.O, KeyCode.P, KeyCode.Q, KeyCode.R, KeyCode.S, KeyCode.T,
@@ -173,6 +171,15 @@ public class InputHandler : MonoBehaviour
     void HandleInput(string inputType, KeyCode keyPressed)
     {
         Debug.Log($"Player input: {inputType}");
+        
+        // Guard rail: Check if a cue is active before allowing valid key presses
+        if (cueSystem != null && !cueSystem.IsCueActive())
+        {
+            // No active cue - treat this as a wrong key press
+            Debug.Log($"No active cue - {inputType} pressed too early/late!");
+            HandleInvalidKeyPress(keyPressed);
+            return;
+        }
         
         // Trigger fighter animation
         if (fighterAnimator != null)
