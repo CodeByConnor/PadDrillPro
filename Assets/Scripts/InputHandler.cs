@@ -16,7 +16,6 @@ public class InputHandler : MonoBehaviour
     private FighterAnimator fighterAnimator;
     private CueSystem cueSystem;
     
-    // Cooldown for wrong key penalties to prevent spam (reduced for better responsiveness)
     private float wrongKeyCooldown = 0.1f;
     private float lastWrongKeyTime = 0f;
     
@@ -41,53 +40,44 @@ public class InputHandler : MonoBehaviour
     
     void CheckInputs()
     {
-        // Check for valid game keys first
-        bool validKeyPressed = false;
         
         if (Input.GetKeyDown(jabKey))
         {
             Debug.Log("JAB pressed!");
             HandleInput("Jab", jabKey);
-            validKeyPressed = true;
         }
         
         if (Input.GetKeyDown(crossKey))
         {
             Debug.Log("CROSS pressed!");
             HandleInput("Cross", crossKey);
-            validKeyPressed = true;
         }
         
         if (Input.GetKeyDown(hookKey))
         {
             Debug.Log("HOOK pressed!");
             HandleInput("Hook", hookKey);
-            validKeyPressed = true;
         }
         
         if (Input.GetKeyDown(uppercutKey))
         {
             Debug.Log("UPPERCUT pressed!");
             HandleInput("Uppercut", uppercutKey);
-            validKeyPressed = true;
         }
         
         if (Input.GetKeyDown(blockKey))
         {
             Debug.Log("BLOCK pressed!");
             HandleInput("Block", blockKey);
-            validKeyPressed = true;
         }
         
         // Always check for invalid key presses (even if valid key was pressed)
-        // This ensures wrong keys are caught regardless of timing
         CheckForInvalidKeyPress();
     }
     
     void CheckForInvalidKeyPress()
     {
-        // More efficient approach - check common problematic keys directly
-        // Only check keys that are likely to be pressed during gameplay
+        // Check common problematic keys that players might accidentally press
         KeyCode[] commonKeys = {
             KeyCode.A, KeyCode.B, KeyCode.C, KeyCode.D, KeyCode.E, KeyCode.F, KeyCode.G, KeyCode.H,
             KeyCode.M, KeyCode.N, KeyCode.O, KeyCode.P, KeyCode.Q, KeyCode.R, KeyCode.S, KeyCode.T,
@@ -100,11 +90,9 @@ public class InputHandler : MonoBehaviour
         
         foreach (KeyCode key in commonKeys)
         {
-            // Skip if it's one of our valid keys
             if (key == jabKey || key == crossKey || key == hookKey || key == uppercutKey || key == blockKey)
                 continue;
                 
-            // Skip ignored keys
             if (IsIgnoredKey(key))
                 continue;
                 
@@ -112,61 +100,59 @@ public class InputHandler : MonoBehaviour
             {
                 Debug.Log($"INVALID KEY PRESSED: {key}");
                 HandleInvalidKeyPress(key);
-                return; // Only process one invalid key per frame
+                return;
             }
         }
     }
     
     bool IsIgnoredKey(KeyCode key)
     {
-        // Ignore these keys to prevent accidental penalties
-        return key == KeyCode.Escape ||           // Escape key
-               key == KeyCode.R ||                // Restart key
+        // Ignore system keys to prevent accidental penalties
+        return key == KeyCode.Escape ||
+               key == KeyCode.R ||
                key == KeyCode.F1 || key == KeyCode.F2 || key == KeyCode.F3 || key == KeyCode.F4 ||
                key == KeyCode.F5 || key == KeyCode.F6 || key == KeyCode.F7 || key == KeyCode.F8 ||
                key == KeyCode.F9 || key == KeyCode.F10 || key == KeyCode.F11 || key == KeyCode.F12 ||
-               (key >= KeyCode.Mouse0 && key <= KeyCode.Mouse6) ||  // Mouse buttons
-               key == KeyCode.LeftShift || key == KeyCode.RightShift ||  // Shift keys
-               key == KeyCode.LeftControl || key == KeyCode.RightControl ||  // Ctrl keys
-               key == KeyCode.LeftAlt || key == KeyCode.RightAlt ||  // Alt keys
-               key == KeyCode.CapsLock || key == KeyCode.Numlock || key == KeyCode.ScrollLock;  // Lock keys
+               (key >= KeyCode.Mouse0 && key <= KeyCode.Mouse6) ||
+               key == KeyCode.LeftShift || key == KeyCode.RightShift ||
+               key == KeyCode.LeftControl || key == KeyCode.RightControl ||
+               key == KeyCode.LeftAlt || key == KeyCode.RightAlt ||
+               key == KeyCode.CapsLock || key == KeyCode.Numlock || key == KeyCode.ScrollLock;
     }
     
     void HandleInvalidKeyPress(KeyCode invalidKey)
     {
-        // Check cooldown to prevent spam
+        // Check cooldown to prevent spam penalties
         if (Time.time - lastWrongKeyTime < wrongKeyCooldown)
         {
-            return; // Still in cooldown, ignore this key press
+            return;
         }
         
-        // Check if this wrong key is being handled by CueSystem (during active cue)
+        // Don't penalize wrong keys during active cues (CueSystem handles it)
         if (cueSystem != null && cueSystem.IsCueActive())
         {
-            return; // Let CueSystem handle wrong keys during active cues
+            return;
         }
         
         lastWrongKeyTime = Time.time;
         
         Debug.Log($"Wrong key pressed: {invalidKey} - Player loses a life!");
         
-        // Trigger fighter animation for getting hit
         if (fighterAnimator != null)
         {
             fighterAnimator.PlayAnimation("Hurt");
         }
         
-        // Player loses a life for pressing wrong key
         if (gameManager != null)
         {
             gameManager.TakeDamage();
             gameManager.ShowFeedback("Wrong Key!");
         }
         
-        // Play sound for wrong key
+        // Play heart loss sound for wrong key penalty
         if (AudioManager.Instance != null)
         {
-            AudioManager.Instance.PlayHeartLossSound(); // Use the same sound as taking damage
+            AudioManager.Instance.PlayHeartLossSound();
         }
     }
     
@@ -174,13 +160,11 @@ public class InputHandler : MonoBehaviour
     {
         Debug.Log($"Player input: {inputType}");
         
-        // Trigger fighter animation
         if (fighterAnimator != null)
         {
             fighterAnimator.PlayAnimation(inputType);
         }
         
-        // Check with cue system for proper timing
         if (cueSystem != null)
         {
             bool validInput = cueSystem.CheckInput(keyPressed);
@@ -194,7 +178,6 @@ public class InputHandler : MonoBehaviour
             }
             else
             {
-                // Wrong key or no active cue - don't give points
                 Debug.Log("Invalid input timing or wrong key");
             }
         }
