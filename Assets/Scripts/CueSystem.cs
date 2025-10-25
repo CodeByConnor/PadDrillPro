@@ -37,6 +37,7 @@ public class CueSystem : MonoBehaviour
     
     void Start()
     {
+        // Find other game components
         gameManager = FindAnyObjectByType<GameManager>();
         timingSystem = FindAnyObjectByType<TimingSystem>();
         coachAnimator = FindAnyObjectByType<CoachAnimator>();
@@ -44,6 +45,7 @@ public class CueSystem : MonoBehaviour
         originalColors = new Color[4];
         originalScales = new Vector3[4];
         
+        // Store original button colors and scales for visual effects
         if (cueButtons != null)
         {
             for (int i = 0; i < cueButtons.Length && i < 4; i++)
@@ -99,6 +101,7 @@ public class CueSystem : MonoBehaviour
     
     void UpdateTimingSettings()
     {
+        // Adjust timing based on game speed
         float speedMultiplier = gameManager.speedMultiplier;
         
         currentCueDisplayTime = baseCueDisplayTime / speedMultiplier;
@@ -135,7 +138,7 @@ public class CueSystem : MonoBehaviour
         
         Debug.Log($"Cue shown: {currentCue}");
         
-        // Start timing window for cue response
+        // Start timing for this cue
         StartCoroutine(CueTimeout());
     }
     
@@ -181,7 +184,7 @@ public class CueSystem : MonoBehaviour
         
         if (pressedKey == expectedKey)
         {
-            // Correct input! Calculate timing for scoring
+            // Correct input, check timing
             float timingOffset = Time.time - (cueStartTime + currentCueDisplayTime * 0.5f);
             cueActive = false;
             
@@ -245,11 +248,11 @@ public class CueSystem : MonoBehaviour
         if (cueButtons == null || buttonIndex < 0 || buttonIndex >= cueButtons.Length || cueButtons[buttonIndex] == null)
             return;
         
-        // Start cool visual effects: glowing rings and particle burst
+        // Start visual effects
         StartCoroutine(GlowTrailEffect(buttonIndex));
         StartCoroutine(ParticleBurst(buttonIndex));
         
-        // Scale up button and change to bright magenta color
+        // Scale up button and change color
         Transform buttonTransform = cueButtons[buttonIndex].transform;
         buttonTransform.localScale = originalScales[buttonIndex] * 1.3f;
         
@@ -281,7 +284,7 @@ public class CueSystem : MonoBehaviour
     
     IEnumerator GlowTrailEffect(int buttonIndex)
     {
-        // Create expanding cyan glow rings around the button
+        // Create glow rings around the button
         Transform buttonTransform = cueButtons[buttonIndex].transform;
         
         for (int i = 0; i < 3; i++)
@@ -316,7 +319,7 @@ public class CueSystem : MonoBehaviour
     
     IEnumerator ParticleBurst(int buttonIndex)
     {
-        // Create yellow sparkles that burst outward from the button
+        // Create sparkles that move outward from the button
         Transform buttonTransform = cueButtons[buttonIndex].transform;
         
         for (int i = 0; i < 8; i++)
