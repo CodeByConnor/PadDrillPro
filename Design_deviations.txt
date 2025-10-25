@@ -1,0 +1,19 @@
+Design Changes from Original One-Pager
+======================================
+
+Built vs Planned
+
+So I pretty much got everything working that I wanted to. The core game is there - you get coach cues, hit the right buttons on time, build streaks, and the game gets faster as you go. All the main controls work (J/K/L/I for punches, space for block), the timing system gives you perfect/good/late/miss feedback, and you get a proper results screen at the end.
+
+Items that will be put in the backlog:
+1. Crowd hype system - One of the original ideas was to have the crowd would get louder as you did better, but due to time constraints and gameplay priority, decided not to pursue this. It was more of a nice-to-have anyway. 
+
+2. Detailed results screen - The plan was to show accuracy percentages, timing graphs, and letter grades (S/A/B/C), but I prefer the bare bone basics: final score, max streak, and time survived. 
+
+Extra Additions:
+- The coach moves around and is not stationary, in sync with cue text
+- Added particle effects when buttons light up
+- Life penalty if you press wrong keys (prevents button mashing)
+- Heart system with animations when you take damage
+
+Bottom line: The final build follows the core parts of the original game design, a boxing trainer that teaches you to read cues and time your punches. 

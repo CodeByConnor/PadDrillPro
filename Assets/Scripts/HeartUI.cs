@@ -6,8 +6,8 @@ using UnityEngine.UI;
 public class HeartUI : MonoBehaviour
 {
     [Header("Heart Settings")]
-    public GameObject heartPrefab;  // Drag a heart image here
-    public Sprite heartSprite;      // Or drag heart sprite directly here
+    public GameObject heartPrefab;
+    public Sprite heartSprite;    
     public Transform heartContainer;  // Parent object for hearts
     public int maxHearts = 5;
     public float heartSize = 1.0f;  // Scale multiplier for heart size
@@ -66,7 +66,7 @@ public class HeartUI : MonoBehaviour
         }
         else
         {
-            // Create simple heart using UI Image
+            // Create simple heart 
             heart = new GameObject("Heart");
             heart.transform.SetParent(heartContainer);
             
@@ -116,13 +116,12 @@ public class HeartUI : MonoBehaviour
     
     public void AnimateHeartLoss()
     {
-        // Optional: Add heart loss animation
         StartCoroutine(HeartLossAnimation());
     }
     
     public void ResetHearts()
     {
-        // Reset all hearts to full visibility and normal scale
+        // Reset all hearts to full visibility
         for (int i = 0; i < heartObjects.Count; i++)
         {
             if (heartObjects[i] != null)
@@ -132,7 +131,7 @@ public class HeartUI : MonoBehaviour
                 // Reset scale
                 heart.transform.localScale = Vector3.one * heartSize;
                 
-                // Reset alpha/color
+                // Reset color
                 Image heartImage = heart.GetComponent<Image>();
                 if (heartImage != null)
                 {
@@ -156,7 +155,6 @@ public class HeartUI : MonoBehaviour
         {
             GameObject lostHeart = heartObjects[lostHeartIndex];
             
-            // Simple scale animation without LeanTween
             Vector3 originalScale = lostHeart.transform.localScale;
             
             // Scale up briefly
@@ -179,7 +177,7 @@ public class HeartUI : MonoBehaviour
                 yield return null;
             }
             
-            // Fade out (if has Image component)
+            // Fade out
             Image heartImage = lostHeart.GetComponent<Image>();
             if (heartImage != null)
             {

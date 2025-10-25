@@ -32,18 +32,17 @@ public class CoachAnimator : MonoBehaviour
     private Color originalColor;
     private Vector3 currentMoveTarget;
     
-    // Auto-generated position offsets from original position (overlap fighter positioning)
-    // Coach dashes to overlap/touch the fighter for realistic pad contact
-    private Vector3 jabOffset = new Vector3(2.0f, 0.3f, 0f);       // Close enough to make contact for jab
-    private Vector3 crossOffset = new Vector3(1.8f, 0.1f, 0f);     // Close enough for cross contact  
-    private Vector3 hookOffset = new Vector3(2.2f, -0.1f, 0f);     // Dramatic side movement reaching fighter
-    private Vector3 uppercutOffset = new Vector3(1.9f, -0.6f, 0f); // Lower position reaching fighter
-    private Vector3 blockOffset = new Vector3(2.1f, 0.4f, 0f);     // Higher position reaching fighter
+    // Auto-generated position offsets from original position 
+    // Coach realistic fight movement
+    private Vector3 jabOffset = new Vector3(2.0f, 0.3f, 0f);       // Jabstep
+    private Vector3 crossOffset = new Vector3(1.8f, 0.1f, 0f);     // Cross step
+    private Vector3 hookOffset = new Vector3(2.2f, -0.1f, 0f);     // Lateral step
+    private Vector3 uppercutOffset = new Vector3(1.9f, -0.6f, 0f); // Uppercut step
+    private Vector3 blockOffset = new Vector3(2.1f, 0.4f, 0f);     // Block step
     
-    // Dramatic variation ranges for sporadic movement
+    // Realistic movement variation
     private Vector3 positionVariation = new Vector3(0.3f, 0.4f, 0f);    // Much more dramatic variation
-    private Vector3 angleVariation = new Vector3(0.2f, 0.3f, 0f);       // Larger angle changes for unpredictability
-    
+    private Vector3 angleVariation = new Vector3(0.2f, 0.3f, 0f);       // Angle changes
     void Start()
     {
         originalPosition = transform.position;
@@ -127,7 +126,7 @@ public class CoachAnimator : MonoBehaviour
             isMoving = true;
             isReturning = false;
             
-            // Add dramatic visual feedback when starting movement
+            // Add visual feedback when starting movement
             if (showMovementFeedback)
             {
                 StartCoroutine(DramaticMovementFeedback(cueType));
@@ -177,7 +176,7 @@ public class CoachAnimator : MonoBehaviour
         switch (cueType.ToLower())
         {
             case "jab":
-                // Dramatic jab movements with sporadic positioning
+                // Dramatic jab step
                 variation = new Vector3(
                     Random.Range(-positionVariation.x * 1.2f, positionVariation.x * 0.8f),
                     Random.Range(-angleVariation.y * 1.5f, angleVariation.y * 1.8f),
@@ -186,7 +185,7 @@ public class CoachAnimator : MonoBehaviour
                 break;
                 
             case "cross":
-                // Aggressive cross movements with wide variation
+                // Cross movements with wide variation
                 variation = new Vector3(
                     Random.Range(-positionVariation.x * 1.5f, positionVariation.x * 1.0f),
                     Random.Range(-angleVariation.y * 1.2f, angleVariation.y * 1.4f),
@@ -195,7 +194,7 @@ public class CoachAnimator : MonoBehaviour
                 break;
                 
             case "hook":
-                // Very dramatic lateral hook movements
+                // Lateral hook movements
                 variation = new Vector3(
                     Random.Range(-positionVariation.x * 2.0f, positionVariation.x * 1.8f),
                     Random.Range(-angleVariation.y * 1.8f, angleVariation.y * 2.0f),
@@ -204,7 +203,7 @@ public class CoachAnimator : MonoBehaviour
                 break;
                 
             case "uppercut":
-                // Sporadic uppercut positioning with dramatic height changes
+                // Uppercut positioning
                 variation = new Vector3(
                     Random.Range(-positionVariation.x * 1.0f, positionVariation.x * 1.0f),
                     Random.Range(-angleVariation.y * 1.5f, angleVariation.y * 1.2f),
@@ -213,7 +212,7 @@ public class CoachAnimator : MonoBehaviour
                 break;
                 
             case "block":
-                // Dramatic blocking movements with sporadic positioning
+                // Dramatic blocking movements 
                 variation = new Vector3(
                     Random.Range(-positionVariation.x * 1.3f, positionVariation.x * 1.1f),
                     Random.Range(-angleVariation.y * 1.4f, angleVariation.y * 1.6f),
@@ -242,14 +241,14 @@ public class CoachAnimator : MonoBehaviour
     {
         if (spriteRenderer != null)
         {
-            // Create dramatic color effects based on cue type
+            // Create color effects based on cue type
             Color flashColor = GetFlashColorForCue(cueType);
             
-            // Quick intense flash
+            // Quick flash
             spriteRenderer.color = flashColor;
             yield return new WaitForSeconds(feedbackDuration * 0.3f);
             
-            // Brief white flash for impact
+            // White flash for impact
             spriteRenderer.color = Color.white;
             yield return new WaitForSeconds(feedbackDuration * 0.4f);
             
